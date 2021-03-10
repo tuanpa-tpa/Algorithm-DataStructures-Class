@@ -51,7 +51,7 @@
 
 #include<bits/stdc++.h>
 using namespace std;
-int minSwaps(vector < int > arr,int N) {
+int minSwap(vector < int > arr,int N) {
     int ans = 0;
     vector < int > temp(N);
     for (int i = 0; i < N; i++) {
@@ -84,7 +84,7 @@ int main() {
         for (int i = 0; i< n; i++) {
             cin >> a[i];
         }
-        cout << minSwaps(a, n) << endl;;
+        cout << minSwap(a, n) << endl;;
     }
     return 0;
 }
