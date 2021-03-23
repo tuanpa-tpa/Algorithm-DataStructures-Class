@@ -1,7 +1,11 @@
 .DS_Store
 .vscode
 main
+main1
+main2
 main.dSYM
+main1.dSYM
+main2.dSYM
 main1.cpp
 main2.cpp
 main3.cpp
