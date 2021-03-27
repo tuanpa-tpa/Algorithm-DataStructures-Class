@@ -13,6 +13,7 @@ int main() {
             cin >> temp;
             A[temp] = true;
             for (int j = s ;j >= temp; j--) {
+                if (A[s]) break;
                 if (A[j-temp]) {
                     A[j] = true;
                 }
