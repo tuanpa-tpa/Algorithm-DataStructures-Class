@@ -1,157 +1,105 @@
-// #include <iostream>
-// #include <vector>
-// #include <queue>
-// #include <algorithm>
-// using namespace std;
-
-// int BFS(int u, int A[1005][1005], bool B[], int n) {
-//     int count = 0;
-//     queue <int> q;
-//     q.push(u);
-//     B[u] = true;
-//     while(!q.empty()) {
-//         int v = q.front(); q.pop();
-//         count++;
-//         for (int i = 1; i <= n; i++) {
-//             if (!B[i] && A[v][i]) {
-//                 q.push(i);
-//                 B[i] = true;
-//             }
-//         }
-//     }
-//     return count;
-// }
-
-// int main() {
-//     int t;
-//     cin >> t;
-//     while(t--) {
-//         int v,e;
-//         cin >> v >> e;
-//         int A[1005][1005] = {0};
-//         bool B[1005] = {false};
-//         for (int i = 1; i <= v; i++) {
-//             for (int j = 1; j <= v; j++) {
-//                 A[i][j] = 0;
-//             }
-//         }
-//         for (int i = 1; i <= e; i++) {
-//             int d,c;
-//             cin >> d >> c; // chuyển vể ma trận kề
-//             A[d][c] = 1;
-//             A[c][d] = 1;
-//         }
-//         vector < vector<int> > res;
-//         for (int i = 1; i <= v; i++) {
-//             for (int j = 1; j <= v; j++) {
-//                 if (A[i][j] == 1) {
-//                     A[i][j] = 0;
-//                     A[j][i] = 0;
-//                     int temp = BFS(1,A,B,v);
-//                     // cout << temp << " ";
-//                     if (temp != v) {
-//                         // vector <int> req;
-//                         // req.push_back(i);
-//                         // req.push_back(j);
-//                         // res.push_back(req);
-//                         cout << i << " " << j << " ";
-//                     }
-//                     // trả lại giá trị cho B
-//                     for (int k = 1; k <= v; k++) {
-//                         B[k] = false;
-//                     }
-//                     A[i][j] = 1;
-//                     // A[j][i] = 1;
-//                 }
-//             }
-//         }
-//         // sort(res.begin(), res.end());
-//         // for (int i = 0; i < res.size(); i++) {
-//         //     for (int j = 0; j < res[i].size(); j++) {
-//         //         cout << res[i][j] << " ";
-//         //     }
-//         // }
-//         cout << endl;
-//     }
-//     return 0;
-// }
-
-
-
 #include <iostream>
-#include <stack>
 #include <queue>
+#include <vector>
+#include <algorithm>
 using namespace std;
-int A[1005][1005];
-int B[1005] = {false};
-int e,v;
 
-void input() {
-    cin >> v >> e;
-    for (int i = 1; i <= v; i++) {
-        for (int j = 1; j <= v; j++) {
-            A[i][j] = 0;
-        }
-    }
-    for (int i = 1; i <= e; i++) {
-        int d, c;
-        cin >> d >> c;
-        A[d][c] = 1;
-        A[c][d] = 1;
-    }
-    for (int j = 1; j <= v; j++) {
-        B[j] = false;
-    }
-}
+
+vector < vector<int> > list(1005);
+vector < pair<int, int> > res;
+bool B[1005] = {false};
+int v,e;
 
 int BFS(int u) {
-    int res = 0;
     queue <int> q;
     q.push(u);
     B[u] = true;
+    int count = 0;
     while(!q.empty()) {
-        int tmp = q.front();q.pop();
-        res++;
-        for (int i= 1; i <= v; i++) {
-            if (B[i] == false && A[tmp][i] == 1) {
-                B[i] = true;
-                q.push(i);
+        int v = q.front(); q.pop();
+        count++;
+        for (int i = 0; i< list[v].size(); i++) {
+            if (!B[list[v][i]]) {
+                q.push(list[v][i]);
+                B[list[v][i]] = true;
             }
         }
+    }    
+    return count;
+}
+
+int demTPLT() {
+	int tplt = 0;
+	for (int i = 1; i <= v; i++) {
+            if (!B[i]) {
+                tplt++;
+                BFS(i);
+            }
     }
-    return res;
+    return tplt;
+}
+
+void canhCau(int tmp,int c, vector < pair<int, int> > store) { // tmp la thanh phan lien thong ban dau
+	for (int i = 0; i < store.size() ; i++) {
+		if (i != c) {
+			list[store[i].first].push_back(store[i].second);
+			list[store[i].second].push_back(store[i].first);
+		}
+	}
+	int dem = demTPLT();
+	if (dem > tmp) {
+		if (store[c].first < store[c].second) {
+            pair <int, int> temp;
+            temp.first = store[c].first;
+            temp.second = store[c].second;
+			res.push_back(temp);
+		} else {
+            pair <int, int> temp;
+            temp.first = store[c].second;
+            temp.second = store[c].first;
+			res.push_back(temp);
+		}
+	}
 }
 
 void reB() {
-    for (int i = 1; i <= v; i++) {
-        B[i] = false;
-    }
+	for (int i = 1; i <= v; i++) {
+		list[i].clear();
+	}
+	for (int i = 1; i <= v; i++) {
+    	B[i] = false;    	
+	}
 }
-
-void canhCau() {
-    for (int i = 1; i <= v; i++) {
-        for (int j = 1; j <= v; j++) {
-            if (A[i][j] == 1) {
-                A[i][j] = 0;
-                A[j][i] = 0;
-                if (BFS(1) != v) {
-                    cout << i << " " << j << endl;
-                }
-                reB();
-                A[i][j] = 1;
-            }
-        }
-    }
-}
-
 
 int main() {
     int t;
     cin >> t;
     while(t--) {
-        input();
-        canhCau();
-        // cout << endl;
+        cin >> v >> e;
+        res.clear();
+        reB();
+        vector < pair<int, int> > store; // luu canh
+        for (int i = 1; i <= e; i++) {
+            int d,c;
+            cin >> d >> c;
+            pair<int,int> temp;
+            temp.first = d;
+            temp.second = c;
+            store.push_back(temp);
+            list[d].push_back(c);
+            list[c].push_back(d);
+        }
+ 		int lt = demTPLT(); // thanh phan lien thong ban dau
+ 		
+ 		for (int i = 0; i < store.size(); i++) {
+ 			reB();
+ 			canhCau(lt,i,store);
+		}
+		sort(res.begin(),res.end());
+		for (int i = 0; i < res.size(); i++) {
+			cout << res[i].first << " " << res[i].second << " "; 
+		}
+		cout<< endl;
     }
     return 0;
 }
